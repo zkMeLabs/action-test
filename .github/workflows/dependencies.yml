@@ -1,5 +1,5 @@
 name: "Dependency Review"
-on: pull_request
+on: [push, pull_request]
 
 permissions:
   contents: read
@@ -21,7 +21,7 @@ jobs:
             go.mod
             go.sum
       - name: "Dependency Review"
-        uses: actions/dependency-review-action@v3
+        uses: actions/dependency-review-action@v4
         if: env.GIT_DIFF
       - name: "Go vulnerability check"
         run: make vulncheck
