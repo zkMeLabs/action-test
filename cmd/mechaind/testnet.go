@@ -16,7 +16,7 @@
 
 package main
 
-// DONTCOVER
+// DONTCOVER dv
 
 import (
 	"bufio"
