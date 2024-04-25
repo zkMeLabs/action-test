@@ -16,7 +16,7 @@
 
 package main
 
-// DONTCOVER  xxx xx yy
+// DONTCOVER  xxx xx yy mm
 
 import (
 	"bufio"
