@@ -26,5 +26,5 @@ jobs:
             go.mod
             go.sum
       - run: |
-          make build
+          echo ${{ env.GIT_DIFF }}
         # if: env.GIT_DIFF
