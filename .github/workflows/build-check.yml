@@ -1,4 +1,4 @@
-name: Build
+name: Build Check
 on:
   pull_request:
     branches:
@@ -7,7 +7,7 @@ on:
     branches:
       - develop
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: build
   cancel-in-progress: true
 jobs:
   build:
@@ -26,5 +26,5 @@ jobs:
             go.mod
             go.sum
       - run: |
-          echo ${{ env.GIT_DIFF }}
+          make build
         if: env.GIT_DIFF
