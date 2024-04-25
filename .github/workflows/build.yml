@@ -27,4 +27,4 @@ jobs:
             go.sum
       - run: |
           make build
-        if: env.GIT_DIFF
+        # if: env.GIT_DIFF
