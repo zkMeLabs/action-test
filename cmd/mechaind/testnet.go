@@ -16,7 +16,7 @@
 
 package main
 
-// DONTCOVER  xxx xx yy mm
+// DONTCOVER  xxx xx yy mm ccc
 
 import (
 	"bufio"
