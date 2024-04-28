@@ -3,9 +3,9 @@ before:
     - go mod download
 
 builds:
-  - id: "evmosd-darwin"
-    main: ./cmd/evmosd
-    binary: bin/evmosd
+  - id: "mechaind-darwin"
+    main: ./cmd/mechaind
+    binary: bin/mechaind
     env:
       - CGO_ENABLED=1
       - CC=o64-clang
@@ -14,13 +14,18 @@ builds:
       - darwin
     goarch:
       - amd64
-    flags:
+    flags: &default_flags
       - -tags=cgo
-    ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-darwin-arm64"
-    main: ./cmd/evmosd
-    binary: bin/evmosd
+    ldflags: &default_ldflags
+      - -s
+      - -w
+      - -X github.com/cosmos/cosmos-sdk/version.Name=evmos
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=mechaind
+      - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
+      - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
+  - id: "mechaind-darwin-arm64"
+    main: ./cmd/mechaind
+    binary: bin/mechaind
     env:
       - CGO_ENABLED=1
       - CC=oa64-clang
@@ -29,13 +34,11 @@ builds:
       - darwin
     goarch:
       - arm64
-    flags:
-      - -tags=cgo
-    ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-linux"
-    main: ./cmd/evmosd
-    binary: bin/evmosd
+    flags: *default_flags
+    ldflags: *default_ldflags
+  - id: "mechaind-linux"
+    main: ./cmd/mechaind
+    binary: bin/mechaind
     env:
       - CGO_ENABLED=1
       - CC=gcc
@@ -44,13 +47,11 @@ builds:
       - linux
     goarch:
       - amd64
-    flags:
-      - -tags=cgo
-    ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-linux-arm64"
-    main: ./cmd/evmosd
-    binary: bin/evmosd
+    flags: *default_flags
+    ldflags: *default_ldflags
+  - id: "mechaind-linux-arm64"
+    main: ./cmd/mechaind
+    binary: bin/mechaind
     env:
       - CGO_ENABLED=1
       - CC=aarch64-linux-gnu-gcc
@@ -59,13 +60,11 @@ builds:
       - linux
     goarch:
       - arm64
-    flags:
-      - -tags=cgo
-    ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-windows"
-    main: ./cmd/evmosd
-    binary: bin/evmosd
+    flags: *default_flags
+    ldflags: *default_ldflags
+  - id: "mechaind-windows"
+    main: ./cmd/mechaind
+    binary: bin/mechaind
     env:
       - CGO_ENABLED=1
       - CC=x86_64-w64-mingw32-gcc
@@ -77,28 +76,27 @@ builds:
     flags:
       - -tags=cgo
       - -buildmode=exe
-    ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
+    ldflags: *default_ldflags
 
 archives:
-  - name_template: '{{ .ProjectName }}_{{ .Version }}_{{- title .Os }}_{{ .Arch }}'
+  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{- title .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
         format: zip
     builds:
-      - evmosd-darwin
-      - evmosd-darwin-arm64
-      - evmosd-windows
-      - evmosd-linux
-      - evmosd-linux-arm64
-  
+      - mechaind-darwin
+      - mechaind-darwin-arm64
+      - mechaind-windows
+      - mechaind-linux
+      - mechaind-linux-arm64
+
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
 snapshot:
   name_template: "{{ .Tag }}-next"
