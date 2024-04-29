@@ -1,19 +1,156 @@
+# before:
+#   hooks:
+#     - go mod download
+
+# builds:
+#   - id: "mechaind-darwin"
+#     main: ./cmd/mechaind
+#     binary: bin/mechaind
+#     env:
+#       - CGO_ENABLED=1
+#       - CC=o64-clang
+#       - CXX=o64-clang++
+#     goos:
+#       - darwin
+#     goarch:
+#       - amd64
+#     flags: &default_flags
+#       - -tags=cgo
+#     ldflags: &default_ldflags
+#       - -s
+#       - -w
+#       - -X github.com/cosmos/cosmos-sdk/version.Name=evmos
+#       - -X github.com/cosmos/cosmos-sdk/version.AppName=mechaind
+#       - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
+#       - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
+#   - id: "mechaind-darwin-arm64"
+#     main: ./cmd/mechaind
+#     binary: bin/mechaind
+#     env:
+#       - CGO_ENABLED=1
+#       - CC=oa64-clang
+#       - CXX=oa64-clang++
+#     goos:
+#       - darwin
+#     goarch:
+#       - arm64
+#     flags: *default_flags
+#     ldflags: *default_ldflags
+#   - id: "mechaind-linux"
+#     main: ./cmd/mechaind
+#     binary: bin/mechaind
+#     env:
+#       - CGO_ENABLED=1
+#       - CC=gcc
+#       - CXX=g++
+#     goos:
+#       - linux
+#     goarch:
+#       - amd64
+#     flags: *default_flags
+#     ldflags: *default_ldflags
+#   - id: "mechaind-linux-arm64"
+#     main: ./cmd/mechaind
+#     binary: bin/mechaind
+#     env:
+#       - CGO_ENABLED=1
+#       - CC=aarch64-linux-gnu-gcc
+#       - CXX=aarch64-linux-gnu-g++
+#     goos:
+#       - linux
+#     goarch:
+#       - arm64
+#     flags: *default_flags
+#     ldflags: *default_ldflags
+#   - id: "mechaind-windows"
+#     main: ./cmd/mechaind
+#     binary: bin/mechaind
+#     env:
+#       - CGO_ENABLED=1
+#       - CC=x86_64-w64-mingw32-gcc
+#       - CXX=x86_64-w64-mingw32-g++
+#     goos:
+#       - windows
+#     goarch:
+#       - amd64
+#     flags:
+#       - -tags=cgo
+#       - -buildmode=exe
+#     ldflags: *default_ldflags
+
+# archives:
+#   - name_template: "{{ .ProjectName }}_{{ .Version }}_{{- title .Os }}_{{ .Arch }}"
+#     format_overrides:
+#       - goos: windows
+#         format: zip
+#     builds:
+#       - mechaind-darwin
+#       - mechaind-darwin-arm64
+#       - mechaind-windows
+#       - mechaind-linux
+#       - mechaind-linux-arm64
+
+# checksum:
+#   name_template: "checksums.txt"
+# changelog:
+#   sort: asc
+#   filters:
+#     exclude:
+#       - "^docs:"
+#       - "^test:"
+# snapshot:
+#   name_template: "{{ .Tag }}-next"
+
+# Make sure to check the documentation at https://goreleaser.com
+
+## Test locally with `make release-dry-run`
+
+## TODO
+# - Add SBOMs
+# - Add Docker Builds
+# - SLSA - https://github.com/goreleaser/goreleaser-example-slsa-provenance
+# - Add Code Signing
+
+env:
+  - CGO_ENABLED=1
+  - CC_darwin_arm64=oa64-clang
+  - CXX_darwin_arm64=oa64-clang++
+  - CC_darwin_amd64=o64-clang
+  - CXX_darwin_amd64=o64-clang+
+  - CC_linux_arm64=aarch64-linux-gnu-gcc
+  - CXX_linux_arm64=aarch64-linux-gnu-g++
+  - CC_linux_amd64=x86_64-linux-gnu-gcc
+  - CXX_linux_amd64=x86_64-linux-gnu-g++
+  - CC_windows_amd64=x86_64-w64-mingw32-gcc
+  - CXX_windows_amd64=x86_64-w64-mingw32-g++
+  - VERSION={{ .Version }}
+  - COMMIT={{ .Commit }}
+  - BUILDTIME={{ .Date }}
+  # - CC_windows_arm64= NOT_CREATING_WINDOWS_ARM64_BINARIES
+  # - CXX_windows_arm64= NOT_CREATING_WINDOWS_ARM64_BINARIES
+
 before:
   hooks:
     - go mod download
+    - go mod tidy
 
 builds:
-  - id: "mechaind-darwin"
+  - id: "mechaind"
     main: ./cmd/mechaind
-    binary: bin/mechaind
+    binary: "mechaind-{{ .Os }}-{{ .Arch }}"
     env:
-      - CGO_ENABLED=1
-      - CC=o64-clang
-      - CXX=o64-clang++
+      - 'CC={{ index .Env (print "CC_" .Os "_" .Arch) }}'
+      - 'CXX={{ index .Env (print "CXX_" .Os "_" .Arch) }}'
     goos:
+      - linux
       - darwin
+      - windows
     goarch:
+      - arm64
       - amd64
+    ignore:
+      - goos: windows
+        goarch: arm64
     flags: &default_flags
       - -tags=cgo
     ldflags: &default_ldflags
@@ -23,72 +160,9 @@ builds:
       - -X github.com/cosmos/cosmos-sdk/version.AppName=mechaind
       - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "mechaind-darwin-arm64"
-    main: ./cmd/mechaind
-    binary: bin/mechaind
-    env:
-      - CGO_ENABLED=1
-      - CC=oa64-clang
-      - CXX=oa64-clang++
-    goos:
-      - darwin
-    goarch:
-      - arm64
-    flags: *default_flags
-    ldflags: *default_ldflags
-  - id: "mechaind-linux"
-    main: ./cmd/mechaind
-    binary: bin/mechaind
-    env:
-      - CGO_ENABLED=1
-      - CC=gcc
-      - CXX=g++
-    goos:
-      - linux
-    goarch:
-      - amd64
-    flags: *default_flags
-    ldflags: *default_ldflags
-  - id: "mechaind-linux-arm64"
-    main: ./cmd/mechaind
-    binary: bin/mechaind
-    env:
-      - CGO_ENABLED=1
-      - CC=aarch64-linux-gnu-gcc
-      - CXX=aarch64-linux-gnu-g++
-    goos:
-      - linux
-    goarch:
-      - arm64
-    flags: *default_flags
-    ldflags: *default_ldflags
-  - id: "mechaind-windows"
-    main: ./cmd/mechaind
-    binary: bin/mechaind
-    env:
-      - CGO_ENABLED=1
-      - CC=x86_64-w64-mingw32-gcc
-      - CXX=x86_64-w64-mingw32-g++
-    goos:
-      - windows
-    goarch:
-      - amd64
-    flags:
-      - -tags=cgo
-      - -buildmode=exe
-    ldflags: *default_ldflags
-
 archives:
-  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{- title .Os }}_{{ .Arch }}"
-    format_overrides:
-      - goos: windows
-        format: zip
-    builds:
-      - mechaind-darwin
-      - mechaind-darwin-arm64
-      - mechaind-windows
-      - mechaind-linux
-      - mechaind-linux-arm64
+  - format: binary
+    name_template: "{{ .Binary }}"
 
 checksum:
   name_template: "checksums.txt"
@@ -100,3 +174,35 @@ changelog:
       - "^test:"
 snapshot:
   name_template: "{{ .Tag }}-next"
+
+release:
+  # If set to true, will not auto-publish the release.
+  # Available only for GitHub and Gitea.
+  draft: false
+
+  target_commitish: "{{ .Commit }}"
+
+  # If set, will create a release discussion in the category specified.
+  #
+  # Warning: do not use categories in the 'Announcement' format.
+  #  Check https://github.com/goreleaser/goreleaser/issues/2304 for more info.
+  #
+  # Default is empty.
+  # discussion_category_name: General
+
+  # If set to auto, will mark the release as not ready for production
+  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
+  # If set to true, will mark the release as not ready for production.
+  # Default is false.
+  prerelease: auto
+
+  # What to do with the release notes in case there the release already exists.
+  #
+  # Valid options are:
+  # - `keep-existing`: keep the existing notes
+  # - `append`: append the current release notes to the existing notes
+  # - `prepend`: prepend the current release notes to the existing notes
+  # - `replace`: replace existing notes
+  #
+  # Default is `keep-existing`.
+  mode: append
