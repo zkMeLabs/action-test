@@ -30,11 +30,9 @@ name: goreleaser
 
 on:
   push:
-    branches:
-      - develop
-    # # run only against tags
-    # tags:
-    #   - "v*.*.*"
+    # run only against tags
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: write
