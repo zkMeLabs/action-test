@@ -22,7 +22,7 @@ jobs:
         run: git config --global --add safe.directory /__w/evmos/evmos
       - uses: actions/checkout@v4
       - name: Get Diff
-        uses: goinweb3/get-diff-action@v7.0.0
+        uses: technote-space/get-diff-action@v6.1.2
         with:
           PATTERNS: |
             **/*.go
