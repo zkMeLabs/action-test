@@ -14,7 +14,7 @@ jobs:
           check-latest: true
       - name: "Checkout Repository"
         uses: actions/checkout@v4
-      - uses: technote-space/get-diff-action@v6.1.2
+      - uses: goinweb3/get-diff-action@v7.0.0
         with:
           PATTERNS: |
             **/**.go
