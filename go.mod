@@ -20,7 +20,7 @@ require (
 	github.com/cosmos/ibc-go/v7 v7.2.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/ethereum/go-ethereum v1.11.5
-	github.com/evmos/evmos-ledger-go v0.3.0-rc0
+	github.com/evmos/evmos-ledger-go v0.4.0
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
